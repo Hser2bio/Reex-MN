@@ -291,8 +291,8 @@ function setup_node() {
 ##### Main #####
 clear
 
-swap
 purgeOldInstallation
+swap
 checks
 prepare_system
 download_node
