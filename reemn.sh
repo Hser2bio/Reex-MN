@@ -41,6 +41,26 @@ purgeOldInstallation() {
     echo -e "${GREEN}* Done${NONE}";
 }
 
+function swap() {
+# check if we have swap
+memory="$(free | grep Swap | tr -s ' ' | cut -d ' ' -f 4)"
+if [ -n "$memory" ] && [ "$memory" -eq "$memory" ] 2>/dev/null; then
+  if [ "$memory" -eq "0" ]; then
+      # make a quick 1gb swap as we only need it for compilation
+      dd if=/dev/zero of=/var/swap.img bs=1024k count=1000
+          mkswap /var/swap.img
+          swapon /var/swap.img
+          echo enabled temporary swapfile..
+    else
+      # a suitable swap file exists
+      echo swapfile not required..
+  fi
+else
+  # if we dont understand this, you need a new linux
+  echo "can not find information of memory. please check you linux distribution."
+  exit
+fi
+}
 
 function download_node() {
   echo -e "${GREEN}Downloading and Installing VPS $COIN_NAME Daemon${NC}"
@@ -271,6 +291,7 @@ function setup_node() {
 ##### Main #####
 clear
 
+swap
 purgeOldInstallation
 checks
 prepare_system
